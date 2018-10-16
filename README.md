@@ -196,7 +196,7 @@
          
 **Sample Code**
 
-      File file = new File(fileName);
+        File file = new File(fileName);
 		DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(schema);
 		DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<GenericRecord>(datumWriter);
 		dataFileWriter.setCodec(CodecFactory.snappyCodec());
@@ -225,7 +225,7 @@
 
 **Writing Avro data to memory**
 
-	   ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 		BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(out, null);
 		DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(schema);
 		datumWriter.write(data, encoder);
@@ -234,7 +234,7 @@
 		
 **Reading Avro data from memory**
 
-      Schema schema = new Schema.Parser().parse(new File(schemaFile));
+        Schema schema = new Schema.Parser().parse(new File(schemaFile));
 		DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
 		DecoderFactory decoder = DecoderFactory.get();
 		BinaryDecoder bd = decoder.binaryDecoder(out.toByteArray(), null);
@@ -246,14 +246,14 @@
   data. The producer can write data in avro format and write them
   as binary data in a ProducerRecord  
   
-	  	   ByteArrayOutputStream record = new ByteArrayOutputStream();
-	      BinaryEncoder binaryEncoder = avroEncoderFactory.binaryEncoder(record, null);
-	      avroWriter.write(operatorAction, binaryEncoder);
-	      binaryEncoder.flush();
-	      ProducerRecord  producerRecord =
-	          new ProducerRecord(topic, key.getBytes(), record.toByteArray());
+		ByteArrayOutputStream record = new ByteArrayOutputStream();
+		BinaryEncoder binaryEncoder = avroEncoderFactory.binaryEncoder(record, null);
+		avroWriter.write(operatorAction, binaryEncoder);
+		binaryEncoder.flush();
+		ProducerRecord  producerRecord = new ProducerRecord(topic, key.getBytes(), record.toByteArray());
 	          
 References
 ==========
-http://hadooptutorial.info/avro-serializing-and-deserializing-example-java-api/
+http://hadooptutorial.info/avro-serializing-and-deserializing-example-java-api
+
 https://www.baeldung.com/java-apache-avro
