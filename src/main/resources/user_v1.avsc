@@ -1,0 +1,14 @@
+{"namespace": "com.njkol.avro.models",
+ "type": "record",
+ "name": "User",
+ "fields": [
+     {"name": "id", "type": "int"},
+     {"name": "username",  "type": ["string", "null"]},
+     {"name": "email_address",  "type": ["string", "null"]},
+     {"name": "phone_number",  "type": ["string", "null"]},
+     {"name": "first_name",  "type": ["string", "null"]},
+     {"name": "middle_name",  "type": ["string", "null"]},
+     {"name": "last_name",  "type": ["string", "null"]},
+     {"name": "sex",  "type": ["string", "null"]}
+ ]
+}
