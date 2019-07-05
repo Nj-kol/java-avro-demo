@@ -2,11 +2,13 @@
 
 ## Dependencies
 
-		<dependency>
-			<groupId>org.apache.avro</groupId>
-			<artifactId>avro-compiler</artifactId>
-			<version>${avro.version}</version>
-		</dependency>
+```
+<dependency>
+	<groupId>org.apache.avro</groupId>
+	<artifactId>avro-compiler</artifactId>
+	<version>${avro.version}</version>
+</dependency>
+```
 
 ## Schema
 
@@ -14,6 +16,7 @@
 
 * For example ( user.avsc )
 
+```
 {"namespace": "com.njkol.avro.models",
  "type": "record",
  "name": "User",
@@ -28,11 +31,13 @@
      {"name": "sex",  "type": ["string", "null"]}
  ]
 }
+```
 
 # With Code generation
 
 * Add the avro maven plugin to the build section of pom.xml
 
+```
 	<build>
 		<plugins>
 			<plugin>
@@ -62,8 +67,9 @@
 			</plugin>
 		</plugins>
 	</build>
+```
 
-* Now, if you do a maven build ( compile, or install ), the Java POJO 
+* Now, if you do a maven build ( compile, or install ), the Java POJO
   objects will be generated from the schema specified in sourceDirectory
   ( src/main/resources ) to the value namespace attribute specified in
   the .avsc file ( com.njkol.avro.models )
@@ -71,16 +77,16 @@
 ## Serializing
 
 * After the code has been generated for the schema, you can write the value objects to disk
-  
+
   **Main Classes**
-  
+
   *SpecificDatumWriter*
-  – Java I-O Class to write data of a schema. 
-  - It implements the base interface DatumWriter. 
+  ï¿½ Java I-O Class to write data of a schema.
+  - It implements the base interface DatumWriter.
   - DatumWriter converts Java objects into an in-memory serialized format
-  
+
   *DataFileWriter*
-   – Stores a sequence of data conforming to a schema in a file
+   ï¿½ Stores a sequence of data conforming to a schema in a file
    - The schema is stored in the file with the data
    - Each datum in a file is of the same schema
    - Data is written with a DatumWriter
@@ -89,38 +95,41 @@
    - Blocks can be compressed
    - Extensible metadata is stored at the end of the file
    - Files may be appended to
-  
-  **Sample Code**
-  
-		Builder usrBuildr = User.newBuilder();
-		usrBuildr = usrBuildr.setId(2);
-		usrBuildr = usrBuildr.setUsername("Nj-Kol");
-		usrBuildr = usrBuildr.setEmailAddress("nilanjan.sarkar100@gmail.com");
-		usrBuildr = usrBuildr.setPhoneNumber("9031871234");
-		usrBuildr = usrBuildr.setFirstName("Nilanjan");
-		usrBuildr = usrBuildr.setMiddleName(" ");
-		usrBuildr = usrBuildr.setLastName("Sarkar");
-		usrBuildr = usrBuildr.setSex("M");
-		
-		User usr = usrBuildr.build();
 
-		// Serialize usr to disk
-		File file = new File("user.avro");
-		DatumWriter<User> userDatumWriter = new SpecificDatumWriter<User>(User.class);
-		DataFileWriter<User> dataFileWriter = new DataFileWriter<User>(userDatumWriter);
-		dataFileWriter.create(usr.getSchema(), file);
-		dataFileWriter.append(usr);
-		dataFileWriter.close();
-	
+  **Sample Code**
+
+	```
+	Builder usrBuildr = User.newBuilder();
+	usrBuildr = usrBuildr.setId(2);
+	usrBuildr = usrBuildr.setUsername("Nj-Kol");
+	usrBuildr = usrBuildr.setEmailAddress("nilanjan.sarkar100@gmail.com");
+	usrBuildr = usrBuildr.setPhoneNumber("9031871234");
+	usrBuildr = usrBuildr.setFirstName("Nilanjan");
+	usrBuildr = usrBuildr.setMiddleName(" ");
+	usrBuildr = usrBuildr.setLastName("Sarkar");
+	usrBuildr = usrBuildr.setSex("M");
+
+	User usr = usrBuildr.build();
+
+	// Serialize usr to disk
+	File file = new File("user.avro");
+	DatumWriter<User> userDatumWriter = new SpecificDatumWriter<User>(User.class);
+	DataFileWriter<User> dataFileWriter = new DataFileWriter<User>(userDatumWriter);
+	dataFileWriter.create(usr.getSchema(), file);
+	dataFileWriter.append(usr);
+	dataFileWriter.close();
+	```
+
 ## Deserializing
 
   **Main Classes**
 
- *DataFileReader*      – Provides random access to files written with DataFileWriter
- *SpecificDatumReader* – Reads data of a schema. It implements DatumReader interface
+ *DataFileReader*      ï¿½ Provides random access to files written with DataFileWriter
+ *SpecificDatumReader* ï¿½ Reads data of a schema. It implements DatumReader interface
 
   **Sample Code**
-  
+
+    ```
       File file = new File("user.avro");		
 		DatumReader<User> userDatumReader = new SpecificDatumReader<User>(User.class);
 		DataFileReader<User> dataFileReader = new DataFileReader<User>(file, userDatumReader);
@@ -129,11 +138,12 @@
 			usr = dataFileReader.next();			
 			System.out.println(usr);
 		}
+	```
 			
 # Without Code generation
 
-* As avro data files contain schema along with the actual data blocks, 
-  we can always read a serialized item regardless of whether we know 
+* As avro data files contain schema along with the actual data blocks,
+  we can always read a serialized item regardless of whether we know
   the schema ahead of time or not
 
 ## Serializing
@@ -147,7 +157,7 @@
 **Sample Code**
 
 		Schema schema = new Schema.Parser().parse(new File("user.avsc"));
-		
+
 		GenericRecord user1 = new GenericData.Record(schema);
 		user1.put("id", 2);
 		user1.put("username", "Nj-Kol");
@@ -157,12 +167,12 @@
 		user1.put("middle_name", " ");
 		user1.put("last_name", "Sarkar");
 		user1.put("sex", "M");
-		
+
 	   File file = new File("users_generic.avro");
 		DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(schema);
 		DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<GenericRecord>(datumWriter);
 		dataFileWriter.create(schema, file);
-		dataFileWriter.append(user1);	
+		dataFileWriter.append(user1);
 		dataFileWriter.close();
 
 ## Deserializing
@@ -183,7 +193,7 @@
 			emp = dataFileReader.next();
 			System.out.println(emp);
 		}
-		
+
 # Append data to an existing File
 
 * You can append data to an existing Avro data file
@@ -193,7 +203,7 @@
 
 * Note - This has to be called only once and not on every record.
          Doing so will in fact lead to throwing an exception
-         
+
 **Sample Code**
 
         File file = new File(fileName);
@@ -218,7 +228,7 @@
  **Example**
 
      dataFileWriter.setCodec(CodecFactory.snappyCodec());));
-     
+
 # Avro In-memory
 
 * Instead of writing data to file, you can also write them to memory
@@ -231,7 +241,7 @@
 		datumWriter.write(data, encoder);
 		encoder.flush();
 		out.close();
-		
+
 **Reading Avro data from memory**
 
         Schema schema = new Schema.Parser().parse(new File(schemaFile));
@@ -239,19 +249,19 @@
 		DecoderFactory decoder = DecoderFactory.get();
 		BinaryDecoder bd = decoder.binaryDecoder(out.toByteArray(), null);
 		GenericRecord result = datumReader.read(null, bd);
-		
-## Use case	
+
+## Use case
 
 * A use case of this could be to encode Kafka message as avro binary
   data. The producer can write data in avro format and write them
   as binary data in a ProducerRecord  
-  
+
 		ByteArrayOutputStream record = new ByteArrayOutputStream();
 		BinaryEncoder binaryEncoder = avroEncoderFactory.binaryEncoder(record, null);
 		avroWriter.write(operatorAction, binaryEncoder);
 		binaryEncoder.flush();
 		ProducerRecord  producerRecord = new ProducerRecord(topic, key.getBytes(), record.toByteArray());
-	          
+
 References
 ==========
 http://hadooptutorial.info/avro-serializing-and-deserializing-example-java-api
